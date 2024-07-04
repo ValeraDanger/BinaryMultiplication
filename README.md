@@ -27,3 +27,4 @@
 - Test passed: 1101 * 0 = 0
 - Test passed: 01011 * 1101 = 10001111
 - Test passed: 101 * 0111 = 100011
+- Test passed: 01011 * 01101 = 10001111
