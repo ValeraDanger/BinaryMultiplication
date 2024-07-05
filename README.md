@@ -28,3 +28,6 @@
 - Test passed: 01011 * 1101 = 10001111
 - Test passed: 101 * 0111 = 100011
 - Test passed: 01011 * 01101 = 10001111
+
+
+[![C CI](https://github.com/ValeraDanger/BinaryMultiplication/actions/workflows/c-ci.yml/badge.svg)](https://github.com/ValeraDanger/BinaryMultiplication/actions/workflows/c-ci.yml)
