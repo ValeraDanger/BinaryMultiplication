@@ -10,6 +10,7 @@ void runTest(const char* binary1, const char* binary2, const char* expected) {
     }
     else {
         printf("Test failed: %s * %s = %s (expected: %s)\n", binary1, binary2, result, expected);
+        exit(1);
     }
     free(result);  // Функция mult выделяет память для результата, и мы должны её освободить
 }
