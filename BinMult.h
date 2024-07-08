@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-int bin2dec(char* num);
-int deg(int base, unsigned int deg);
-char* dec2bin(int num);
-
-char* mult(char* str1, char* str2);
+char* shift(char* num, int count);
+char* mult(char* num1, char* num2);
+char* add(char* result, char* summand);

@@ -1,55 +1,114 @@
 ﻿#include "BinMult.h"
+#include <string.h>
 #include <stdlib.h>
-#include <math.h>
 
-int bin2dec(char* num) {
-    return strtol(num, NULL, 2);
+char* shift(char* num, int count) {
+	int result_size = strlen(num) + count + 1;
+	int len_num = strlen(num);
+	char* result = (char*)malloc(result_size);  //создаем буфер для всей строки + количетсво символов смещения + 1 символ конца строки
+	strcpy_s(result, result_size, num);
+
+	for (int i = 0; i < count; i++) {
+		result[strlen(num) + i] = '0';
+	}
+
+	result[result_size - 1] = '\0';
+
+	return result;
 }
 
-int deg(int base, unsigned int deg) {  //интовое возведение в степень, чтобы избежать неточностей в округлении флотовой версии
-    if (base == 0) return 0;
+char* add(char* a, char* b) {
+    int lenA = strlen(a);
+    int lenB = strlen(b);
 
-    int result = 1;
-    for (int i = 0; i < deg; i++) {
-        result *= base;
+    // Определяем максимальную длину
+    int maxLen = lenA > lenB ? lenA : lenB;
+
+    // Выделяем память для результата
+    // +2: один для возможного переноса и один для завершающего нуля
+    char* result = (char*)calloc(maxLen + 2, sizeof(char));
+
+    //result[maxLen + 1] = '\0'; // Завершающий ноль
+
+    int carry = 0; // Перенос
+    int i = lenA - 1;
+    int j = lenB - 1;
+    int k = maxLen;
+
+    // Складываем числа
+    while (i >= 0 || j >= 0 || carry) {
+        int sum = carry;
+        if (i >= 0) {
+            sum += a[i] - '0';
+            i--;
+        }
+        if (j >= 0) {
+            sum += b[j] - '0';
+            j--;
+        }
+        carry = sum / 2;
+        result[k] = (sum % 2) + '0';
+        k--;
+    }
+
+    
+    if (result[0] == 0) {
+        char* formated_result = (char*)calloc(maxLen + 1, sizeof(char));    // Если в начале строки был ноль, то переноса не было, а щначит ноль нужно удалить
+        strcpy_s(formated_result, maxLen + 1, result + 1);                  //Адрес указателя result сместим на единицу, чтобы откинуть ведущий ноль
+        free(result);
+
+        return formated_result;
     }
 
     return result;
 }
 
-char* dec2bin(int num) {
-    if (num == 0) {
-        char* result = (char*)calloc(2, sizeof(char));
-        result[0] = '0';
-        return result;
-    };
-        
-    char reverseBinaryNum[32]; //так как число 32 битное
+char* mult(char* num1, char* num2) {
+	int result_size = strlen(num1) + strlen(num2) + 1; //максимальная длина буфера. При двоичном умножении она равна сумме длин множителей
+	int len_num1 = strlen(num1);
+	int len_num2 = strlen(num2);
 
-    int i = 0;
-    while (num > 0) {
-        reverseBinaryNum[i] = '0' + num % 2;
-        i++;
-        num /= 2;
-    }
-    reverseBinaryNum[i] = '\0';
+	char* result = (char*)calloc(result_size, sizeof(char));
 
-    char* result = (char*)calloc(i+1, sizeof(char));
-    result[i] = '\0';
-    int j = 0;
-    for (i -= 1; i >= 0; i--) {
-        result[j] = reverseBinaryNum[i];
-        j++;
+    for (int i = 0; i < result_size - 1; i++) {     
+        result[i] = '0';
     }
 
+	for (int i = 0; i < len_num2; i++) {        //Проходим каждую цифру второго числа с конца
+
+        if (num2[ (len_num2 - 1) - i] == '1') {               //Если очередная цифра - единица, то смещаем первое число на позицию этой цифры во втором числе и прибавляем его к result.
+            char* tmp_shift = shift(num1, i);
+            char* tmp_result = add(result, tmp_shift);      //Фактически получили умножение столбиком
+
+            free(tmp_shift);
+            free(result);
+            result = tmp_result;
+        }
+
+        else if (num2[(len_num2 - 1) - i] == '0') {
+            continue;
+        }
+
+        else {
+            exit(2);        //Если очередная цифра не ноль или единица - что-то пошло не так. Завершим программу с кодом 2.
+        }
+	}
+
+    //Теперь удалим ведущие нули, если такие имеются
+    int zeroes_count = 0;
+    for (int i = 0; result[i] == '0'; i++) {
+        zeroes_count++;
+    }
+
+    if (zeroes_count == result_size - 1) {  //Возможна ситуация, когда число целиком состоит из нулей. В таком случае, оставим в числе один ноль, уменьшив размер zeroes_count на единицу.
+        zeroes_count = result_size - 2;
+    }
+
+    if (zeroes_count > 0) {
+        char* tmp_result = (char*)calloc(result_size - zeroes_count, sizeof(char));
+        strcpy_s(tmp_result, result_size - zeroes_count, result + zeroes_count);    //Адрес указателя result сместим на zeroes_count, чтобы откинуть ведущие ноли
+        free(result);
+        result = tmp_result;
+    }
     return result;
-}
-
-char* mult(char* str1, char* str2) {
-    int num1 = bin2dec(str1);
-    int num2 = bin2dec(str2);
-
-    int mult = num1 * num2;
-
-    return dec2bin(mult);
 }
