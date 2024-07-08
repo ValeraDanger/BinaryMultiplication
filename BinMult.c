@@ -6,7 +6,7 @@ char* shift(char* num, int count) {
 	int result_size = strlen(num) + count + 1;
 	int len_num = strlen(num);
 	char* result = (char*)malloc(result_size);  //создаем буфер для всей строки + количетсво символов смещения + 1 символ конца строки
-	strcpy_s(result, result_size, num);
+	strcpy(result, num);
 
 	for (int i = 0; i < count; i++) {
 		result[strlen(num) + i] = '0';
@@ -54,7 +54,7 @@ char* add(char* a, char* b) {
     
     if (result[0] == 0) {
         char* formated_result = (char*)calloc(maxLen + 1, sizeof(char));    // Если в начале строки был ноль, то переноса не было, а щначит ноль нужно удалить
-        strcpy_s(formated_result, maxLen + 1, result + 1);                  //Адрес указателя result сместим на единицу, чтобы откинуть ведущий ноль
+        strcpy(formated_result, result + 1);                  //Адрес указателя result сместим на единицу, чтобы откинуть ведущий ноль
         free(result);
 
         return formated_result;
@@ -106,7 +106,7 @@ char* mult(char* num1, char* num2) {
 
     if (zeroes_count > 0) {
         char* tmp_result = (char*)calloc(result_size - zeroes_count, sizeof(char));
-        strcpy_s(tmp_result, result_size - zeroes_count, result + zeroes_count);    //Адрес указателя result сместим на zeroes_count, чтобы откинуть ведущие ноли
+        strcpy(tmp_result, result + zeroes_count);    //Адрес указателя result сместим на zeroes_count, чтобы откинуть ведущие ноли
         free(result);
         result = tmp_result;
     }
