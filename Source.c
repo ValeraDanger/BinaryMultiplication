@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include "BinMult.h"
 
+
 void runTest(const char* binary1, const char* binary2, const char* expected) {
-    char* result = mult(binary1, binary2);
+    char* result = mult((char*)binary1, (char*)binary2);
     if (strcmp(result, expected) == 0) {
         printf("Test passed: %s * %s = %s\n", binary1, binary2, result);
     }
@@ -13,6 +14,7 @@ void runTest(const char* binary1, const char* binary2, const char* expected) {
         exit(1);
     }
     free(result);  // Функция mult выделяет память для результата, и мы должны её освободить
+
 }
 
 int main() {
@@ -38,7 +40,10 @@ int main() {
 
     // Тесты с двумя числами с ведущим нулем
     runTest("01011", "01101", "10001111");
-  
+
+    // Тесты с умножением длинного числа
+    runTest("11011010101010101000111010101010011010", "101", "10001000101010101001100100101010100000010");
+
 
     return 0;
 }
